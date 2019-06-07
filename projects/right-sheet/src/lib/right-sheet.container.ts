@@ -87,7 +87,7 @@ export class MatRightSheetContainer extends BasePortalOutlet
     private readonly _changeDetectorRef: ChangeDetectorRef,
     private readonly _focusTrapFactory: FocusTrapFactory,
     breakpointObserver: BreakpointObserver,
-    @Optional() @Inject(DOCUMENT) document: Document,
+    @Optional() @Inject(DOCUMENT) document: any,
     /**
      * The right sheet configuration.
      */
@@ -95,7 +95,7 @@ export class MatRightSheetContainer extends BasePortalOutlet
   ) {
     super();
 
-    this._document = document;
+    this._document = document as Document;
     this._breakpointSubscription = breakpointObserver
       .observe([
         Breakpoints.Medium,

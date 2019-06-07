@@ -5,7 +5,13 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:right-sheet": "ng build right-sheet",
+    "build:all": "npm run build:right-sheet",
     "test": "ng test",
+    "test:right-sheet": "ng test right-sheet",
+    "test:ci:right-sheet": "ng test right-sheet -c ci",
+    "test:all": "npm run test:right-sheet",
+    "test:ci:all": "npm run test:ci:right-sheet",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

@@ -22,6 +22,13 @@
             "main": "projects/right-sheet/src/test.ts",
             "tsConfig": "projects/right-sheet/tsconfig.spec.json",
             "karmaConfig": "projects/right-sheet/karma.conf.js"
+          },
+          "configurations": {
+            "ci": {
+              "browsers": "ChromeCI",
+              "codeCoverage": true,
+              "watch": false
+            }
           }
         },
         "lint": {
