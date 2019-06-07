@@ -173,7 +173,7 @@ export class MatRightSheet implements OnDestroy {
       disposeOnNavigation: config.closeOnNavigation,
       width: '420px',
       height: '100vh',
-      scrollStrategy: this._overlay.scrollStrategies.block(),
+      scrollStrategy: config.scrollStrategy || this._overlay.scrollStrategies.block(),
       positionStrategy: this._overlay
         .position()
         .global()

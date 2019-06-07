@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { ESCAPE } from '@angular/cdk/keycodes';
+import { ESCAPE, hasModifierKey } from '@angular/cdk/keycodes';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { Location } from '@angular/common';
 import { merge, Observable, Subject } from 'rxjs';
@@ -84,7 +84,8 @@ export class MatRightSheetRef<T = any, R = any> {
         .keydownEvents()
         .pipe(filter((event) => event.keyCode === ESCAPE)),
     ).subscribe(() => {
-      if (!this.disableClose) {
+      if (!this.disableClose &&
+        (event.type !== 'keydown' || !hasModifierKey(event as KeyboardEvent))) {
         this.dismiss();
       }
     });

@@ -1,6 +1,6 @@
 import { Directionality } from '@angular/cdk/bidi';
 import { A, ESCAPE } from '@angular/cdk/keycodes';
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { OverlayContainer, ScrollStrategy } from '@angular/cdk/overlay';
 import { ViewportRuler } from '@angular/cdk/scrolling';
 import { Location } from '@angular/common';
 import { SpyLocation } from '@angular/common/testing';
@@ -228,16 +228,30 @@ describe('MatRightSheet', () => {
     expect(containerElement.getAttribute('role')).toBe('dialog');
   });
 
-  it('should close a bottom sheet via the escape key', fakeAsync(() => {
+  it('should close a right sheet via the escape key', fakeAsync(() => {
     rightSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
 
-    dispatchKeyboardEvent(document.body, 'keydown', ESCAPE);
+    const event = dispatchKeyboardEvent(document.body, 'keydown', ESCAPE);
     viewContainerFixture.detectChanges();
     flush();
 
     expect(
       overlayContainerElement.querySelector('mat-right-sheet-container'),
     ).toBeNull();
+    expect(event.defaultPrevented).toBe(true);
+  }));
+
+  it('should not close a right sheet via the escape key with a modifier', fakeAsync(() => {
+    rightSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
+
+    const event = createKeyboardEvent('keydown', ESCAPE);
+    Object.defineProperty(event, 'altKey', {get: () => true});
+    dispatchEvent(document.body, event);
+    viewContainerFixture.detectChanges();
+    flush();
+
+    expect(overlayContainerElement.querySelector('mat-right-sheet-container')).toBeTruthy();
+    expect(event.defaultPrevented).toBe(false);
   }));
 
   it('should close when clicking on the overlay backdrop', fakeAsync(() => {
@@ -521,6 +535,17 @@ describe('MatRightSheet', () => {
     expect(
       overlayContainerElement.querySelector('mat-right-sheet-container'),
     ).toBeTruthy();
+  }));
+
+  it('should be able to attach a custom scroll strategy', fakeAsync(() => {
+    const scrollStrategy: ScrollStrategy = {
+      attach: () => {},
+      enable: jasmine.createSpy('scroll strategy enable spy'),
+      disable: () => {}
+    };
+
+    rightSheet.open(PizzaMsg, {scrollStrategy});
+    expect(scrollStrategy.enable).toHaveBeenCalled();
   }));
 
   describe('passing in data', () => {
