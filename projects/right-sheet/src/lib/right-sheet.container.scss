@@ -1,0 +1,40 @@
+@import "~@angular/cdk/a11y";
+@import "right-sheet-theme";
+
+// The right sheet minimum width on larger screen sizes is based
+// on increments of the toolbar, according to the spec. See:
+// https://material.io/guidelines/components/bottom-sheets.html#bottom-sheets-specs
+$_mat-bottom-sheet-width-increment: 64px;
+$mat-bottom-sheet-container-vertical-padding: 8px !default;
+$mat-bottom-sheet-container-horizontal-padding: 16px !default;
+
+.mat-right-sheet-container {
+  padding: $mat-bottom-sheet-container-vertical-padding $mat-bottom-sheet-container-horizontal-padding;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  outline: 0;
+  overflow: auto;
+
+  @include cdk-high-contrast {
+    outline: 1px solid;
+  }
+}
+
+/*
+.fo-right-sheet-container-medium {
+  min-width: $_mat-bottom-sheet-width-increment * 6;
+  max-width: calc(100vw - #{$_mat-bottom-sheet-width-increment * 2});
+}
+
+.fo-right-sheet-container-large {
+  min-width: $_mat-bottom-sheet-width-increment * 8;
+  max-width: calc(100vw - #{$_mat-bottom-sheet-width-increment * 4});
+}
+
+.fo-right-sheet-container-xlarge {
+  min-width: $_mat-bottom-sheet-width-increment * 9;
+  max-width: calc(100vw - #{$_mat-bottom-sheet-width-increment * 6});
+}
+*/

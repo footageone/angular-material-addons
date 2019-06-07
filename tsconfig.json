@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "right-sheet": [
+        "dist/right-sheet"
+      ],
+      "right-sheet/*": [
+        "dist/right-sheet/*"
+      ]
+    }
   }
 }
