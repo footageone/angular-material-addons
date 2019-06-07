@@ -86,6 +86,7 @@ export class MatRightSheetRef<T = any, R = any> {
     ).subscribe(() => {
       if (!this.disableClose &&
         (event.type !== 'keydown' || !hasModifierKey(event as KeyboardEvent))) {
+        event.preventDefault();
         this.dismiss();
       }
     });
