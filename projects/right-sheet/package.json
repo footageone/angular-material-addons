@@ -1,10 +1,30 @@
 {
   "name": "mat-right-sheet",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.2",
+  "keywords": [
+    "angular",
+    "ng",
+    "angular8",
+    "angular 8",
+    "material",
+    "material design",
+    "angular material",
+    "components",
+    "sheet",
+    "ng2",
+    "angular2",
+    "web components"
+  ],
   "peerDependencies": {
     "@angular/common": "^8.0.0",
     "@angular/core": "^8.0.0",
     "@angular/cdk": "^8.0.0",
     "@angular/material": "^8.0.0"
+  },
+  "homepage": "https://github.com/footageone/angular-material-addons",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/footageone/angular-material-addons.git"
   }
 }
