@@ -21,7 +21,7 @@ import { MatRightSheetRef } from './right-sheet.ref';
 export const MAT_RIGHT_SHEET_DEFAULT_OPTIONS = new InjectionToken<MatRightSheetConfig>('mat-right-sheet-default-options');
 
 /**
- * Service to trigger Material Design bottom sheets.
+ * Service to trigger Material Design right sheets.
  */
 @Injectable({providedIn: MatRightSheetModule})
 export class MatRightSheet implements OnDestroy {
@@ -171,7 +171,7 @@ export class MatRightSheet implements OnDestroy {
       direction: config.direction,
       hasBackdrop: config.hasBackdrop,
       disposeOnNavigation: config.closeOnNavigation,
-      width: '420px',
+      width: config.width || '420px',
       height: '100vh',
       scrollStrategy: config.scrollStrategy || this._overlay.scrollStrategies.block(),
       positionStrategy: this._overlay

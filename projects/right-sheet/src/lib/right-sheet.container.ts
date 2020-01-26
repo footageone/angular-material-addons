@@ -221,7 +221,17 @@ export class MatRightSheetContainer extends BasePortalOutlet
       toFocus &&
       typeof toFocus.focus === 'function'
     ) {
-      toFocus.focus();
+      const activeElement = this._document.activeElement;
+      const element = this._elementRef.nativeElement;
+
+      // Make sure that focus is still inside the bottom sheet or is on the body (usually because a
+      // non-focusable element like the backdrop was clicked) before moving it. It's possible that
+      // the consumer moved it themselves before the animation was done, in which case we shouldn't
+      // do anything.
+      if (!activeElement || activeElement === this._document.body || activeElement === element ||
+        element.contains(activeElement)) {
+        toFocus.focus();
+      }
     }
 
     if (this._focusTrap) {

@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:right-sheet": "ng build right-sheet",
+    "build:right-sheet": "ng build right-sheet && cp projects/right-sheet/src/lib/_right-sheet-theme.scss dist/right-sheet",
     "build:all": "npm run build:right-sheet",
     "test": "ng test",
     "test:right-sheet": "ng test right-sheet",

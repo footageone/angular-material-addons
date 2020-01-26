@@ -14,7 +14,7 @@ import { InjectionToken, ViewContainerRef } from '@angular/core';
 export const MAT_RIGHT_SHEET_DATA = new InjectionToken<any>('MatRightSheetData');
 
 /**
- * Configuration used when opening a bottom sheet.
+ * Configuration used when opening a right sheet.
  */
 export class MatRightSheetConfig<D = any> {
   /** The view container to place the overlay for the bottom sheet into. */
@@ -62,4 +62,9 @@ export class MatRightSheetConfig<D = any> {
 
   /** Scroll strategy to be used for the bottom sheet. */
   scrollStrategy?: ScrollStrategy;
+
+  /**
+   * width of overlay
+   */
+  public width?: string;
 }

@@ -957,7 +957,7 @@ describe('MatRightSheet with parent MatRightSheet', () => {
 });
 
 describe('MatRightSheet with default options', () => {
-  let bottomSheet: MatRightSheet;
+  let rightSheet: MatRightSheet;
   let overlayContainer: OverlayContainer;
   let overlayContainerElement: HTMLElement;
 
@@ -987,7 +987,7 @@ describe('MatRightSheet with default options', () => {
   beforeEach(inject(
     [MatRightSheet, OverlayContainer],
     (b: MatRightSheet, oc: OverlayContainer) => {
-      bottomSheet = b;
+      rightSheet = b;
       overlayContainer = oc;
       overlayContainerElement = oc.getContainerElement();
     },
@@ -1008,7 +1008,7 @@ describe('MatRightSheet with default options', () => {
   });
 
   it('should use the provided defaults', () => {
-    bottomSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
+    rightSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
 
     viewContainerFixture.detectChanges();
 
@@ -1026,7 +1026,7 @@ describe('MatRightSheet with default options', () => {
   });
 
   it('should be overridable by open() options', fakeAsync(() => {
-    bottomSheet.open(PizzaMsg, {
+    rightSheet.open(PizzaMsg, {
       hasBackdrop: true,
       disableClose: false,
       viewContainerRef: testViewContainerRef,
@@ -1045,6 +1045,45 @@ describe('MatRightSheet with default options', () => {
     expect(
       overlayContainerElement.querySelector('mat-right-sheet-container'),
     ).toBeFalsy();
+  }));
+
+
+  it('should not move focus if it was moved outside the sheet while animating', fakeAsync(() => {
+    // Create a element that has focus before the bottom sheet is opened.
+    const button = document.createElement('button');
+    const otherButton = document.createElement('button');
+    const body = document.body;
+    button.id = 'bottom-sheet-trigger';
+    otherButton.id = 'other-button';
+    body.appendChild(button);
+    body.appendChild(otherButton);
+    button.focus();
+
+    const rightSheetRef = rightSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
+
+    flushMicrotasks();
+    viewContainerFixture.detectChanges();
+    flushMicrotasks();
+
+    expect(document.activeElement!.id).not.toBe('bottom-sheet-trigger',
+      'Expected the focus to change when the bottom sheet was opened.');
+
+    // Start the closing sequence and move focus out of bottom sheet.
+    rightSheetRef.dismiss();
+    otherButton.focus();
+
+    expect(document.activeElement!.id)
+      .toBe('other-button', 'Expected focus to be on the alternate button.');
+
+    flushMicrotasks();
+    viewContainerFixture.detectChanges();
+    flush();
+
+    expect(document.activeElement!.id)
+      .toBe('other-button', 'Expected focus to stay on the alternate button.');
+
+    body.removeChild(button);
+    body.removeChild(otherButton);
   }));
 });
 

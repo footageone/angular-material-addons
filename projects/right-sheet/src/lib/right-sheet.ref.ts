@@ -134,4 +134,8 @@ export class MatRightSheetRef<T = any, R = any> {
   public keydownEvents(): Observable<KeyboardEvent> {
     return this._overlayRef.keydownEvents();
   }
+
+  public updateWidth(width: string) {
+    this._overlayRef.updateSize({width});
+  }
 }
