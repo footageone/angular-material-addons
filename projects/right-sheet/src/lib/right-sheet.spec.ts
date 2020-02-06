@@ -1121,7 +1121,7 @@ class ComponentWithTemplateRef {
   public localValue: string;
   public rightSheetRef: MatRightSheetRef<any>;
 
-  @ViewChild(TemplateRef, {static: false}) public templateRef: TemplateRef<any>;
+  @ViewChild(TemplateRef) public templateRef: TemplateRef<any>;
 
   public setRef(bottomSheetRef: MatRightSheetRef<any>): string {
     this.rightSheetRef = bottomSheetRef;
