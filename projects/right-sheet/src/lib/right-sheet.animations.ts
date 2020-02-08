@@ -21,7 +21,7 @@ export const matRightSheetAnimations: {
       animate(
         `${AnimationDurations.COMPLEX} ${
           AnimationCurves.ACCELERATION_CURVE
-          }`,
+        }`,
       ),
     ),
     transition(
@@ -29,7 +29,7 @@ export const matRightSheetAnimations: {
       animate(
         `${AnimationDurations.EXITING} ${
           AnimationCurves.DECELERATION_CURVE
-          }`,
+        }`,
       ),
     ),
   ]),

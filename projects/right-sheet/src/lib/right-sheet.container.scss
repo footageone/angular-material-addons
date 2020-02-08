@@ -1,5 +1,5 @@
 // todo, why does this not work with ~@angular/cdk/a11y
-@import "../../../../node_modules/@angular/cdk/a11y";
+@import "~@angular/cdk/a11y";
 
 // The right sheet minimum width on larger screen sizes is based
 // on increments of the toolbar, according to the spec. See:
