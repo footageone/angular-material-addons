@@ -24,5 +24,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/footageone/angular-material-addons.git"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
   }
 }
