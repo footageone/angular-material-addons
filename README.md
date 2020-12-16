@@ -1,8 +1,8 @@
 # Material Addons
 
 
-[![Build Status](https://travis-ci.com/footageone/angular-material-addons.svg?branch=master)](https://travis-ci.com/ng-maps/ng-maps)
-[![codecov.io](https://codecov.io/github/footageone/angular-material-addons/coverage.svg?branch=master)](https://codecov.io/github/ng-maps/ng-maps?branch=master)
+[![Build Status](https://travis-ci.com/footageone/angular-material-addons.svg?branch=master)](https://travis-ci.com/footageone/angular-material-addons)
+[![codecov.io](https://codecov.io/github/footageone/angular-material-addons/coverage.svg?branch=master)](https://codecov.io/github/footageone/angular-material-addons?branch=master)
 
 ## Packages
 
