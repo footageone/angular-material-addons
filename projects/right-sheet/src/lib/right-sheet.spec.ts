@@ -21,18 +21,27 @@ export interface ModifierKeys {
 }
 
 /**
- * Dispatches a keydown event from an element.
+ * Defines a readonly property on the given event object. Readonly properties on an event object
+ * are always set as configurable as that matches default readonly properties for DOM event objects.
+ */
+function defineReadonlyEventProperty(event: Event, propertyName: string, value: any) {
+  Object.defineProperty(event, propertyName, {get: () => value, configurable: true});
+}
+
+/**
+ * Creates a keyboard event with the specified key and modifiers.
  * @docs-private
  */
 export function createKeyboardEvent(type: string, keyCode: number = 0, key: string = '',
-                                    target?: Element, modifiers: ModifierKeys = {}) {
-  const event = document.createEvent('KeyboardEvent') as any;
-  const originalPreventDefault = event.preventDefault;
+                                    modifiers: ModifierKeys = {}) {
+  const event = document.createEvent('KeyboardEvent');
+  const originalPreventDefault = event.preventDefault.bind(event);
 
   // Firefox does not support `initKeyboardEvent`, but supports `initKeyEvent`.
-  if (event.initKeyEvent) {
-    event.initKeyEvent(type, true, true, window, modifiers.control, modifiers.alt, modifiers.shift,
-      modifiers.meta, keyCode);
+  // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/initKeyEvent.
+  if ((event as any).initKeyEvent !== undefined) {
+    (event as any).initKeyEvent(type, true, true, window, modifiers.control, modifiers.alt,
+      modifiers.shift, modifiers.meta, keyCode);
   } else {
     // `initKeyboardEvent` expects to receive modifiers as a whitespace-delimited string
     // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/initKeyboardEvent
@@ -54,7 +63,10 @@ export function createKeyboardEvent(type: string, keyCode: number = 0, key: stri
       modifiersList += 'Meta ';
     }
 
-    event.initKeyboardEvent(type,
+    // TS3.6 removed the `initKeyboardEvent` method and suggested porting to
+    // `new KeyboardEvent()` constructor. We cannot use that as we support IE11.
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/initKeyboardEvent.
+    (event as any).initKeyboardEvent(type,
       true, /* canBubble */
       true, /* cancelable */
       window, /* view */
@@ -67,37 +79,40 @@ export function createKeyboardEvent(type: string, keyCode: number = 0, key: stri
 
   // Webkit Browsers don't set the keyCode when calling the init function.
   // See related bug https://bugs.webkit.org/show_bug.cgi?id=16735
-  Object.defineProperties(event, {
-    keyCode: { get: () => keyCode },
-    key: { get: () => key },
-    target: { get: () => target },
-    ctrlKey: { get: () => !!modifiers.control },
-    altKey: { get: () => !!modifiers.alt },
-    shiftKey: { get: () => !!modifiers.shift },
-    metaKey: { get: () => !!modifiers.meta }
-  });
+  defineReadonlyEventProperty(event, 'keyCode', keyCode);
+  defineReadonlyEventProperty(event, 'key', key);
+  defineReadonlyEventProperty(event, 'ctrlKey', !!modifiers.control);
+  defineReadonlyEventProperty(event, 'altKey', !!modifiers.alt);
+  defineReadonlyEventProperty(event, 'shiftKey', !!modifiers.shift);
+  defineReadonlyEventProperty(event, 'metaKey', !!modifiers.meta);
 
   // IE won't set `defaultPrevented` on synthetic events so we need to do it manually.
+  // tslint:disable-next-line:only-arrow-functions
   event.preventDefault = function() {
-    Object.defineProperty(event, 'defaultPrevented', { get: () => true });
-    return originalPreventDefault.apply(this, arguments);
+    defineReadonlyEventProperty(event, 'defaultPrevented', true);
+    return originalPreventDefault();
   };
 
   return event;
 }
 
-
-/** Utility to dispatch any event on a Node. */
-export function dispatchEvent(node: Node | Window, event: Event): Event {
+/**
+ * Utility to dispatch any event on a Node.
+ * @docs-private
+ */
+export function dispatchEvent<T extends Event>(node: Node | Window, event: T): T {
   node.dispatchEvent(event);
   return event;
 }
 
-/** Shorthand to dispatch a keyboard event with a specified key code. */
+/**
+ * Shorthand to dispatch a keyboard event with a specified key code and
+ * optional modifiers.
+ * @docs-private
+ */
 export function dispatchKeyboardEvent(node: Node, type: string, keyCode?: number, key?: string,
-                                      target?: Element, modifiers?: ModifierKeys): KeyboardEvent {
-  return dispatchEvent(node,
-    createKeyboardEvent(type, keyCode, key, target, modifiers)) as KeyboardEvent;
+                                      modifiers?: ModifierKeys): KeyboardEvent {
+  return dispatchEvent(node, createKeyboardEvent(type, keyCode, key, modifiers));
 }
 
 describe('MatRightSheet', () => {
@@ -278,8 +293,7 @@ describe('MatRightSheet', () => {
   it('should not close a right sheet via the escape key with a modifier', fakeAsync(() => {
     rightSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
 
-    const event = createKeyboardEvent('keydown', ESCAPE);
-    Object.defineProperty(event, 'altKey', {get: () => true});
+    const event = createKeyboardEvent('keydown', ESCAPE, undefined, {alt: true});
     dispatchEvent(document.body, event);
     viewContainerFixture.detectChanges();
     flush();
@@ -333,23 +347,18 @@ describe('MatRightSheet', () => {
   }));
 
   it('should emit the keyboardEvent stream when key events target the overlay', fakeAsync(() => {
-    const rightSheetRef = rightSheet.open(PizzaMsg, {
-      viewContainerRef: testViewContainerRef,
-    });
+    const rightSheetRef = rightSheet.open(PizzaMsg, {viewContainerRef: testViewContainerRef});
     const spy = jasmine.createSpy('keyboardEvent spy');
 
     rightSheetRef.keydownEvents().subscribe(spy);
     viewContainerFixture.detectChanges();
 
-    const backdrop = overlayContainerElement.querySelector(
-      '.cdk-overlay-backdrop',
-    ) as HTMLElement;
-    const container = overlayContainerElement.querySelector(
-      'mat-right-sheet-container',
-    ) as HTMLElement;
+    const backdrop = overlayContainerElement.querySelector('.cdk-overlay-backdrop') as HTMLElement;
+    const container =
+      overlayContainerElement.querySelector('mat-right-sheet-container') as HTMLElement;
     dispatchKeyboardEvent(document.body, 'keydown', A);
-    dispatchKeyboardEvent(document.body, 'keydown', A, undefined, backdrop);
-    dispatchKeyboardEvent(document.body, 'keydown', A, undefined, container);
+    dispatchKeyboardEvent(backdrop, 'keydown', A);
+    dispatchKeyboardEvent(container, 'keydown', A);
 
     expect(spy).toHaveBeenCalledTimes(3);
   }));
@@ -1101,6 +1110,7 @@ describe('MatRightSheet with default options', () => {
     viewContainerFixture.detectChanges();
     flushMicrotasks();
 
+    // tslint:disable-next-line:no-non-null-assertion
     expect(document.activeElement!.id).not.toBe('bottom-sheet-trigger',
       'Expected the focus to change when the bottom sheet was opened.');
 
@@ -1108,6 +1118,7 @@ describe('MatRightSheet with default options', () => {
     rightSheetRef.dismiss();
     otherButton.focus();
 
+    // tslint:disable-next-line:no-non-null-assertion
     expect(document.activeElement!.id)
       .toBe('other-button', 'Expected focus to be on the alternate button.');
 
@@ -1115,11 +1126,13 @@ describe('MatRightSheet with default options', () => {
     viewContainerFixture.detectChanges();
     flush();
 
+    // tslint:disable-next-line:no-non-null-assertion
     expect(document.activeElement!.id)
       .toBe('other-button', 'Expected focus to stay on the alternate button.');
 
     body.removeChild(button);
     body.removeChild(otherButton);
+
   }));
 });
 
@@ -1159,8 +1172,8 @@ class ComponentWithTemplateRef {
 
   @ViewChild(TemplateRef) public templateRef: TemplateRef<any>;
 
-  public setRef(bottomSheetRef: MatRightSheetRef<any>): string {
-    this.rightSheetRef = bottomSheetRef;
+  public setRef(rightSheetRef: MatRightSheetRef<any>): string {
+    this.rightSheetRef = rightSheetRef;
     return '';
   }
 }
