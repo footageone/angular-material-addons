@@ -5,14 +5,14 @@
   $foreground: map-get($theme, foreground);
 
   .mat-right-sheet-container {
-    @include _mat-theme-elevation(16, $theme);
+    @include mat-private-theme-elevation(16, $theme);
     background: mat-color($background, dialog);
     color: mat-color($foreground, text);
   }
 }
 
 @mixin mat-right-sheet-typography($config) {
-  .fo-right-sheet-container {
+  .mat-right-sheet-container {
     @include mat-typography-level-to-styles($config, body-1);
   }
 }
