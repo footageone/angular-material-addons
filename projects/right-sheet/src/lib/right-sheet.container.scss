@@ -1,4 +1,5 @@
 // todo, why does this not work with ~@angular/cdk/a11y
+@use '~@angular/cdk' as cdk;
 @import "../../../../node_modules/@angular/cdk/a11y";
 
 // The right sheet minimum width on larger screen sizes is based
@@ -17,7 +18,7 @@ $mat-bottom-sheet-container-horizontal-padding: 16px !default;
   outline: 0;
   overflow: auto;
 
-  @include cdk-high-contrast {
+  @include cdk.high-contrast {
     outline: 1px solid;
   }
 }

@@ -1,4 +1,4 @@
-@import "~@angular/material/theming";
+@use '~@angular/material' as mat;
 
 @mixin mat-right-sheet-theme($theme) {
   $background: map-get($theme, background);
@@ -6,13 +6,13 @@
 
   .mat-right-sheet-container {
     @include mat-private-theme-elevation(16, $theme);
-    background: mat-color($background, dialog);
-    color: mat-color($foreground, text);
+    background: mat.get-color-from-palette($background, dialog);
+    color: mat.get-color-from-palette($foreground, text);
   }
 }
 
 @mixin mat-right-sheet-typography($config) {
   .mat-right-sheet-container {
-    @include mat-typography-level-to-styles($config, body-1);
+    @include mat.typography-level($config, body-1);
   }
 }
