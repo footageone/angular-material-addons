@@ -1,17 +1,18 @@
 @use '~@angular/material' as mat;
+@use '~@angular/material/core/style/private' as private;
 
-@mixin mat-right-sheet-theme($theme) {
+@mixin right-sheet-theme($theme) {
   $background: map-get($theme, background);
   $foreground: map-get($theme, foreground);
 
   .mat-right-sheet-container {
-    @include mat-private-theme-elevation(16, $theme);
+    @include private.private-theme-elevation(16, $theme);
     background: mat.get-color-from-palette($background, dialog);
     color: mat.get-color-from-palette($foreground, text);
   }
 }
 
-@mixin mat-right-sheet-typography($config) {
+@mixin right-sheet-typography($config) {
   .mat-right-sheet-container {
     @include mat.typography-level($config, body-1);
   }
