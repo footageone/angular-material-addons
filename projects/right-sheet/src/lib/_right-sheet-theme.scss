@@ -1,5 +1,5 @@
-@use '~@angular/material' as mat;
-@use '~@angular/material/core/style/private' as private;
+@use '@angular/material' as mat;
+@use '@angular/material/core/style/private' as private;
 
 @mixin right-sheet-theme($theme) {
   $background: map-get($theme, background);
