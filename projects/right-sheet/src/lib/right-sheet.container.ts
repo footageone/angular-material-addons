@@ -7,8 +7,10 @@
  */
 
 import { AnimationEvent } from '@angular/animations';
-import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
+import { FocusTrap, FocusTrapFactory, InteractivityChecker } from '@angular/cdk/a11y';
+import { coerceArray } from '@angular/cdk/coercion';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { _getFocusedElementPierceShadowDom } from '@angular/cdk/platform';
 import { BasePortalOutlet, CdkPortalOutlet, ComponentPortal, TemplatePortal, } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
@@ -20,6 +22,7 @@ import {
   EmbeddedViewRef,
   EventEmitter,
   Inject,
+  NgZone,
   OnDestroy,
   Optional,
   ViewChild,
@@ -90,6 +93,8 @@ export class MatRightSheetContainer extends BasePortalOutlet
     private readonly _elementRef: ElementRef<HTMLElement>,
     private readonly _changeDetectorRef: ChangeDetectorRef,
     private readonly _focusTrapFactory: FocusTrapFactory,
+    private readonly _interactivityChecker: InteractivityChecker,
+    private readonly _ngZone: NgZone,
     breakpointObserver: BreakpointObserver,
     @Optional() @Inject(DOCUMENT) document: any,
     /**
@@ -178,8 +183,7 @@ export class MatRightSheetContainer extends BasePortalOutlet
   }
 
   private _toggleClass(cssClass: string, add: boolean) {
-    const classList = this._elementRef.nativeElement.classList;
-    add ? classList.add(cssClass) : classList.remove(cssClass);
+    this._elementRef.nativeElement.classList.toggle(cssClass, add);
   }
 
   private _validatePortalAttached() {
@@ -192,26 +196,78 @@ export class MatRightSheetContainer extends BasePortalOutlet
 
   private _setPanelClass() {
     const element: HTMLElement = this._elementRef.nativeElement;
-    const panelClass = this.rightSheetConfig.panelClass;
+    element.classList.add(...coerceArray(this.rightSheetConfig.panelClass || []));
+  }
 
-    if (Array.isArray(panelClass)) {
-      // Note that we can't use a spread here, because IE doesn't support multiple arguments.
-      panelClass.forEach((cssClass) => element.classList.add(cssClass));
-    } else if (panelClass) {
-      element.classList.add(panelClass);
+/**
+   * Focuses the provided element. If the element is not focusable, it will add a tabIndex
+   * attribute to forcefully focus it. The attribute is removed after focus is moved.
+   * @param element The element to focus.
+   */
+ private _forceFocus(element: HTMLElement, options?: FocusOptions) {
+  if (!this._interactivityChecker.isFocusable(element)) {
+    element.tabIndex = -1;
+    // The tabindex attribute should be removed to avoid navigating to that element again
+    this._ngZone.runOutsideAngular(() => {
+      element.addEventListener('blur', () => element.removeAttribute('tabindex'));
+      element.addEventListener('mousedown', () => element.removeAttribute('tabindex'));
+    });
+  }
+  element.focus(options);
+}
+
+  /**
+   * Focuses the first element that matches the given selector within the focus trap.
+   * @param selector The CSS selector for the element to set focus to.
+   */
+   private _focusByCssSelector(selector: string, options?: FocusOptions) {
+    let elementToFocus = this._elementRef.nativeElement.querySelector(
+      selector,
+    ) as HTMLElement | null;
+    if (elementToFocus) {
+      this._forceFocus(elementToFocus, options);
     }
   }
 
-  /** Moves the focus inside the focus trap. */
-  private _trapFocus() {
+  /**
+   * Moves the focus inside the focus trap. When autoFocus is not set to 'bottom-sheet',
+   * if focus cannot be moved then focus will go to the bottom sheet container.
+   */
+   private _trapFocus() {
+    const element = this._elementRef.nativeElement;
+
     if (!this._focusTrap) {
-      this._focusTrap = this._focusTrapFactory.create(
-        this._elementRef.nativeElement,
-      );
+      this._focusTrap = this._focusTrapFactory.create(element);
     }
 
-    if (this.rightSheetConfig.autoFocus) {
-      this._focusTrap.focusInitialElementWhenReady();
+    // If were to attempt to focus immediately, then the content of the bottom sheet would not
+    // yet be ready in instances where change detection has to run first. To deal with this,
+    // we simply wait for the microtask queue to be empty when setting focus when autoFocus
+    // isn't set to bottom sheet. If the element inside the bottom sheet can't be focused,
+    // then the container is focused so the user can't tab into other elements behind it.
+    switch (this.rightSheetConfig.autoFocus) {
+      case false:
+      case 'dialog':
+        const activeElement = _getFocusedElementPierceShadowDom();
+        // Ensure that focus is on the bottom sheet container. It's possible that a different
+        // component tried to move focus while the open animation was running. See:
+        // https://github.com/angular/components/issues/16215. Note that we only want to do this
+        // if the focus isn't inside the bottom sheet already, because it's possible that the
+        // consumer specified `autoFocus` in order to move focus themselves.
+        if (activeElement !== element && !element.contains(activeElement)) {
+          element.focus();
+        }
+        break;
+      case true:
+      case 'first-tabbable':
+        this._focusTrap.focusInitialElementWhenReady();
+        break;
+      case 'first-heading':
+        this._focusByCssSelector('h1, h2, h3, h4, h5, h6, [role="heading"]');
+        break;
+      default:
+        this._focusByCssSelector(this.rightSheetConfig.autoFocus!);
+        break;
     }
   }
 
@@ -250,9 +306,9 @@ export class MatRightSheetContainer extends BasePortalOutlet
 
     // The `focus` method isn't available during server-side rendering.
     if (this._elementRef.nativeElement.focus) {
-      Promise.resolve().then(() =>
-        this._elementRef.nativeElement.focus(),
-      );
+      this._ngZone.runOutsideAngular(() => {
+        Promise.resolve().then(() => this._elementRef.nativeElement.focus());
+      });
     }
   }
 }

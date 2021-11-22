@@ -7,9 +7,9 @@ Run `npm i mat-right-sheet` and add `MatRightSheetModule` to your modules. For f
 Include the theming in your stylesheets. For example:
 
 ```SCSS
-@import "~mat-right-sheet/right-sheet-theme";
+@use "mat-right-sheet/right-sheet-theme" as mrs;
 
-@include mat-right-sheet-theme($theme);
+@include mrs.mat-right-sheet-theme($theme);
 
-@include mat-right-sheet-typography($custom-typography);
+@include mrs.mat-right-sheet-typography($custom-typography);
 ```
