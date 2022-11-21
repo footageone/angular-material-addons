@@ -14,9 +14,9 @@
     "web components"
   ],
   "peerDependencies": {
-    "@angular/common": "^14.0.0",
-    "@angular/core": "^14.0.0",
-    "@angular/cdk": "^14.0.0",
+    "@angular/common": "^15.0.0",
+    "@angular/core": "^15.0.0",
+    "@angular/cdk": "^15.0.0",
     "@angular/material": "^14.0.0"
   },
   "homepage": "https://github.com/footageone/angular-material-addons",
