@@ -14,10 +14,9 @@ import { MatCommonModule } from '@angular/material/core';
 import { MatRightSheetContainer } from './right-sheet.container';
 
 @NgModule({
-  imports: [CommonModule, OverlayModule, MatCommonModule, PortalModule],
-  exports: [MatRightSheetContainer, MatCommonModule],
-  declarations: [MatRightSheetContainer],
-  entryComponents: [MatRightSheetContainer],
+    imports: [CommonModule, OverlayModule, MatCommonModule, PortalModule],
+    exports: [MatRightSheetContainer, MatCommonModule],
+    declarations: [MatRightSheetContainer]
 })
 export class MatRightSheetModule {
 }
