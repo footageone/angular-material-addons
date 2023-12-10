@@ -1,6 +1,6 @@
 {
-  "name": "angular-material-addons",
-  "version": "0.0.0",
+  "name": "mat-right-sheet",
+  "version": "15.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -15,7 +15,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^15.0.0",
     "@angular/cdk": "^15.0.0",
