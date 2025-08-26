@@ -1219,16 +1219,9 @@ const TEST_DIRECTIVES = [
 ];
 
 @NgModule({
-  imports: [MatRightSheetModule, NoopAnimationsModule],
-  exports: TEST_DIRECTIVES,
-  declarations: TEST_DIRECTIVES,
-  entryComponents: [
-    ComponentWithChildViewContainer,
-    ComponentWithTemplateRef,
-    PizzaMsg,
-    TacoMsg,
-    RightSheetWithInjectedData,
-  ],
+    imports: [MatRightSheetModule, NoopAnimationsModule],
+    exports: TEST_DIRECTIVES,
+    declarations: TEST_DIRECTIVES
 })
 class RightSheetTestModule {
 }
