@@ -1137,16 +1137,20 @@ describe('MatRightSheet with default options', () => {
 });
 
 /* tslint:disable */
-@Directive({selector: 'dir-with-view-container'})
+@Directive({
+    selector: 'dir-with-view-container',
+    standalone: false
+})
 class DirectiveWithViewContainer {
   constructor(public viewContainerRef: ViewContainerRef) {
   }
 }
 
 @Component({
-  template: `
+    template: `
         <dir-with-view-container></dir-with-view-container>
     `,
+    standalone: false
 })
 class ComponentWithChildViewContainer {
   @ViewChild(DirectiveWithViewContainer, {static: true})
@@ -1158,13 +1162,14 @@ class ComponentWithChildViewContainer {
 }
 
 @Component({
-  selector: 'arbitrary-component-with-template-ref',
-  template: `
+    selector: 'arbitrary-component-with-template-ref',
+    template: `
     <ng-template let-data let-rightSheetRef="rightSheetRef">
       Cheese {{ localValue }} {{ data?.value
       }}{{ setRef(rightSheetRef) }}</ng-template
     >
   `,
+    standalone: false
 })
 class ComponentWithTemplateRef {
   public localValue: string;
@@ -1178,7 +1183,10 @@ class ComponentWithTemplateRef {
   }
 }
 
-@Component({template: '<p>Pizza</p> <input> <button>Close</button>'})
+@Component({
+    template: '<p>Pizza</p> <input> <button>Close</button>',
+    standalone: false
+})
 class PizzaMsg {
   constructor(
     public rightSheetRef: MatRightSheetRef<PizzaMsg>,
@@ -1188,20 +1196,27 @@ class PizzaMsg {
   }
 }
 
-@Component({template: '<p>Taco</p>'})
+@Component({
+    template: '<p>Taco</p>',
+    standalone: false
+})
 class TacoMsg {
 }
 
 @Component({
-  template: '',
-  providers: [MatRightSheet],
+    template: '',
+    providers: [MatRightSheet],
+    standalone: false
 })
 class ComponentThatProvidesMatBottomSheet {
   constructor(public rightSheet: MatRightSheet) {
   }
 }
 
-@Component({template: ''})
+@Component({
+    template: '',
+    standalone: false
+})
 class RightSheetWithInjectedData {
   constructor(@Inject(MAT_RIGHT_SHEET_DATA) public data: any) {
   }
@@ -1219,16 +1234,9 @@ const TEST_DIRECTIVES = [
 ];
 
 @NgModule({
-  imports: [MatRightSheetModule, NoopAnimationsModule],
-  exports: TEST_DIRECTIVES,
-  declarations: TEST_DIRECTIVES,
-  entryComponents: [
-    ComponentWithChildViewContainer,
-    ComponentWithTemplateRef,
-    PizzaMsg,
-    TacoMsg,
-    RightSheetWithInjectedData,
-  ],
+    imports: [MatRightSheetModule, NoopAnimationsModule],
+    exports: TEST_DIRECTIVES,
+    declarations: TEST_DIRECTIVES
 })
 class RightSheetTestModule {
 }

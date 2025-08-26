@@ -8,7 +8,7 @@
 
 import { Directionality } from '@angular/cdk/bidi';
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
-import { ComponentPortal, ComponentType, PortalInjector, TemplatePortal, } from '@angular/cdk/portal';
+import { ComponentPortal, ComponentType, TemplatePortal, } from '@angular/cdk/portal';
 import { Location } from '@angular/common';
 import { ComponentRef, Inject, Injectable, InjectionToken, Injector, OnDestroy, Optional, SkipSelf, TemplateRef, } from '@angular/core';
 import { of as observableOf } from 'rxjs';
@@ -148,10 +148,12 @@ export class MatRightSheet implements OnDestroy {
       config &&
       config.viewContainerRef &&
       config.viewContainerRef.injector;
-    const injector = new PortalInjector(
-      userInjector || this._injector,
-      new WeakMap([[MatRightSheetConfig, config]]),
-    );
+    const injector = Injector.create({
+      providers: [
+        { provide: MatRightSheetConfig, useValue: config }
+      ],
+      parent: userInjector || this._injector
+    });
 
     const containerPortal = new ComponentPortal(
       MatRightSheetContainer,
@@ -197,31 +199,34 @@ export class MatRightSheet implements OnDestroy {
   private _createInjector<T>(
     config: MatRightSheetConfig,
     rightSheetRef: MatRightSheetRef<T>,
-  ): PortalInjector {
+  ): Injector {
     const userInjector =
       config &&
       config.viewContainerRef &&
       config.viewContainerRef.injector;
-    const injectionTokens = new WeakMap<any, any>([
-      [MatRightSheetRef, rightSheetRef],
-      [MAT_RIGHT_SHEET_DATA, config.data],
-    ]);
+    const providers: any[] = [
+      { provide: MatRightSheetRef, useValue: rightSheetRef },
+      { provide: MAT_RIGHT_SHEET_DATA, useValue: config.data },
+    ];
 
     if (
       config.direction &&
       (!userInjector ||
         !userInjector.get<Directionality | null>(Directionality, null))
     ) {
-      injectionTokens.set(Directionality, {
-        value: config.direction,
-        change: observableOf(),
+      providers.push({
+        provide: Directionality,
+        useValue: {
+          value: config.direction,
+          change: observableOf(),
+        }
       });
     }
 
-    return new PortalInjector(
-      userInjector || this._injector,
-      injectionTokens,
-    );
+    return Injector.create({
+      providers: providers,
+      parent: userInjector || this._injector
+    });
   }
 }
 

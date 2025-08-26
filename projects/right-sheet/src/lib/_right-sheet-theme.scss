@@ -166,13 +166,13 @@ $opacity: 1 !default;
 
   .mat-right-sheet-container {
     @include private-theme-elevation(16, $theme);
-    background: mat.get-color-from-palette($background, dialog);
-    color: mat.get-color-from-palette($foreground, text);
+    background: mat.m2-get-color-from-palette($background, dialog);
+    color: mat.m2-get-color-from-palette($foreground, text);
   }
 }
 
 @mixin right-sheet-typography($config) {
   .mat-right-sheet-container {
-    @include mat.typography-level($config, body-1);
+    @include mat.m2-typography-level($config, body-1);
   }
 }

@@ -39,29 +39,30 @@ import { MatRightSheetConfig } from './right-sheet.config';
  * @docs-private
  */
 @Component({
-  //    moduleId: module.id,
-  selector: 'mat-right-sheet-container',
-  templateUrl: './right-sheet.container.html',
-  styleUrls: ['./right-sheet.container.scss'],
-  // In Ivy embedded views will be change detected from their declaration place, rather than where
-  // they were stamped out. This means that we can't have the bottom sheet container be OnPush,
-  // because it might cause the sheets that were opened from a template not to be out of date.
-  // tslint:disable-next-line:validate-decorators
-  changeDetection: ChangeDetectionStrategy.Default,
-  // tslint:disable-next-line: use-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
-  animations: [matRightSheetAnimations.rightSheetState],
-  // tslint:disable-next-line: use-host-property-decorator
-  host: {
-    class: 'mat-right-sheet-container',
-    tabindex: '-1',
-    role: 'dialog',
-    'aria-modal': 'true',
-    '[attr.aria-label]': 'rightSheetConfig?.ariaLabel',
-    '[@state]': '_animationState',
-    '(@state.start)': '_onAnimationStart($event)',
-    '(@state.done)': '_onAnimationDone($event)',
-  },
+    //    moduleId: module.id,
+    selector: 'mat-right-sheet-container',
+    templateUrl: './right-sheet.container.html',
+    styleUrls: ['./right-sheet.container.scss'],
+    // In Ivy embedded views will be change detected from their declaration place, rather than where
+    // they were stamped out. This means that we can't have the bottom sheet container be OnPush,
+    // because it might cause the sheets that were opened from a template not to be out of date.
+    // tslint:disable-next-line:validate-decorators
+    changeDetection: ChangeDetectionStrategy.Default,
+    // tslint:disable-next-line: use-view-encapsulation
+    encapsulation: ViewEncapsulation.None,
+    animations: [matRightSheetAnimations.rightSheetState],
+    // tslint:disable-next-line: use-host-property-decorator
+    host: {
+        class: 'mat-right-sheet-container',
+        tabindex: '-1',
+        role: 'dialog',
+        'aria-modal': 'true',
+        '[attr.aria-label]': 'rightSheetConfig?.ariaLabel',
+        '[@state]': '_animationState',
+        '(@state.start)': '_onAnimationStart($event)',
+        '(@state.done)': '_onAnimationDone($event)',
+    },
+    standalone: false
 })
 // tslint:disable-next-line: component-class-suffix
 export class MatRightSheetContainer extends BasePortalOutlet
