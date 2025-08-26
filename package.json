@@ -1,6 +1,6 @@
 {
   "name": "mat-right-sheet",
-  "version": "19.0.0",
+  "version": "20.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve right-sheet",

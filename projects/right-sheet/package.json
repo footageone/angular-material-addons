@@ -1,6 +1,6 @@
 {
-  "name": "@duxor/mat-right-sheet",
-  "version": "19.0.0",
+  "name": "mat-right-sheet",
+  "version": "20.0.0",
   "keywords": [
     "angular",
     "ng",
@@ -14,16 +14,16 @@
     "web components"
   ],
   "peerDependencies": {
-    "@angular/common": ">=19.0.0 <20.0.0",
-    "@angular/core": ">=19.0.0 <20.0.0",
-    "@angular/cdk": ">=19.0.0 <20.0.0",
-    "@angular/material": ">=19.0.0 <20.0.0"
+    "@angular/common": ">=20.0.0 <21.0.0",
+    "@angular/core": ">=20.0.0 <21.0.0",
+    "@angular/cdk": ">=20.0.0 <21.0.0",
+    "@angular/material": ">=20.0.0 <21.0.0"
   },
-  "homepage": "https://github.com/duxor/angular-material-addons",
+  "homepage": "https://github.com/footageone/angular-material-addons",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/duxor/angular-material-addons.git"
+    "url": "https://github.com/footageone/angular-material-addons.git"
   },
   "dependencies": {
     "tslib": "^2.0.0"
